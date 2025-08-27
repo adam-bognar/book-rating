@@ -1,0 +1,170 @@
+# =============================
+# Root .gitignore for book_rating
+# Stack: .NET 8 (backend) + Angular (frontend)
+# =============================
+
+###############
+# .NET / C#   #
+###############
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+**/publish/
+**/Generated/  
+
+# Visual Studio working folders
+.vs/
+
+# User-specific files
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.ilk
+*.obj
+*.tmp
+*.tmp_proj
+*.svclog
+*.pid
+
+# NuGet
+*.nupkg
+*.snupkg
+**/packages/*
+!**/packages/build/
+*.nuget.props
+*.nuget.targets
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+###############
+# Angular / JS #
+###############
+frontend/node_modules/
+**/node_modules/
+frontend/dist/
+dist/
+dist-*/
+/.angular/
+**/.angular/
+
+# npm / yarn / pnpm logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Optional: uncomment if you do NOT commit lockfiles (recommended to keep them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Coverage / test
+coverage/
+lcov.info
+
+###############
+# Environment  #
+###############
+env/
+.env
+.env.*
+!.env.example
+*.env.local
+
+# ASP.NET Core user secrets & local config
+secrets.json
+appsettings.*.local.json
+appsettings.Local.json
+
+# (Typically KEEP the following; comment patterns instead of ignoring)
+# appsettings.json
+# appsettings.Development.json
+
+###############
+# IDE / Editor #
+###############
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.history/
+.ionide/
+
+# VS Code (keep curated project config)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+###############
+# OS / Misc    #
+###############
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+Icon?
+
+# Archives / packages
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.7z
+
+# Logs & diagnostics
+logs/
+*.log
+*.trace
+*.dmp
+*.stacktrace
+
+# Crash dumps
+*.mdmp
+*.core
+
+###############
+# Temporary    #
+###############
+*.swp
+*.swo
+*.orig
+*.bak
+*.tmp
+~$*
+
+# Lock / state
+*.lock
+*.state
+
+# Tooling caches
+.scannerwork/
+.SonarCache/
+/.gradle/
+/.cache/
+
+###############
+# Generated EF Migrations (Usually COMMIT; comment if keeping)
+#!**/Migrations/
+
+###############
+# Local notes / scratch
+notes.local.*
+scratch.*
+
+# End of file
