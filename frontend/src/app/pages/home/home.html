@@ -1,0 +1,68 @@
+<main class="flex flex-col w-full py-12 px-8">
+    <div class="flex flex-col gap-2">
+        <h1 class="text-3xl font-bold">Discover Books</h1>
+        <h3 class="text-sm text-gray-500">Find your next great read from our collection</h3>
+    </div>
+
+    <!-- Discover Filters Bar -->
+  <form [formGroup]="filterForm" (ngSubmit)="submit()" class="pt-6">
+    <div class="flex flex-wrap items-center gap-3 rounded-2xl bg-white shadow-sm border border-gray-200 p-3">
+      <!-- Search -->
+      <input formControlName="search" type="text" placeholder="Search books, authors..."
+           class="h-12 flex-1 min-w-[220px] px-4 rounded-lg border border-gray-300 focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none text-sm" />
+
+      <!-- Category -->
+      <select formControlName="category"
+          class="h-12 px-4 rounded-lg border border-gray-300 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none text-sm">
+        @for (cat of categories; track cat) {
+          <option [value]="cat">{{ cat }}</option>
+        }
+      </select>
+
+      <!-- Sort Field -->
+      <select formControlName="sortField"
+          class="h-12 px-4 rounded-lg border border-gray-300 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none text-sm">
+        @for (field of sortFields; track field) {
+          <option [value]="field">{{ field }}</option>
+        }
+      </select>
+
+      <!-- Sort Direction Toggle -->
+      <button type="button" (click)="toggleDir()"
+          class="h-12 px-6 rounded-lg border border-gray-300 bg-white hover:bg-green-50 text-sm font-medium flex items-center gap-2 focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          [attr.aria-pressed]="filterForm.value.sortDir === 'Z-A'">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 17V3" />
+          <path d="M8 17l3-3" />
+          <path d="M8 17l-3-3" />
+          <path d="M16 7v14" />
+          <path d="M16 7l3 3" />
+          <path d="M16 7l-3 3" />
+        </svg>
+        <span>{{ filterForm.value.sortDir }}</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- Books Grid -->
+  <section class="mt-10">
+    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      @for (b of pagedBooks(); track b.title) {
+        <app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="b.rating" [releaseDate]="b.releaseDate" />
+      }
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-10 flex items-center justify-between flex-wrap gap-4">
+      <p class="text-sm text-gray-500">Page {{ currentPage() }} of {{ totalPages() }} (showing {{ pagedBooks().length }} of {{ books.length }} books)</p>
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="goTo(currentPage()-1)" [disabled]="currentPage()===1" class="px-3 h-9 rounded-md border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-green-50">Prev</button>
+        @for (p of [].constructor(totalPages()); track p; let i = $index) {
+          <button type="button" (click)="goTo(i+1)" class="w-9 h-9 rounded-md border text-sm font-medium hover:bg-green-50" [class.bg-green-600]="currentPage()===(i+1)" [class.text-white]="currentPage()===(i+1)">{{ i+1 }}</button>
+        }
+        <button type="button" (click)="goTo(currentPage()+1)" [disabled]="currentPage()===totalPages()" class="px-3 h-9 rounded-md border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-green-50">Next</button>
+      </div>
+    </div>
+  </section>
+
+</main>
