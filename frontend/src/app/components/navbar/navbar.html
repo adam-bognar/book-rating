@@ -1,0 +1,26 @@
+<nav class="w-full border-b border-gray-200">
+	<div class="mx-auto max-w-7xl px-4">
+		<div class="flex h-14 items-center justify-between">
+			<div class="flex items-center font-semibold text-lg tracking-tight text-green-700 select-none">
+				BookTracker
+			</div>
+
+			<ul class="flex items-center gap-1">
+				@for (item of navItems; track item.path) {
+					<li>
+						<a [routerLink]="item.path" routerLinkActive="active"
+							 #rla="routerLinkActive"
+							 class="group flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-green-50 hover:text-green-700" 
+							 [class.bg-green-600]="rla.isActive" 
+							 [class.text-white]="rla.isActive" 
+							 [class.text-gray-600]="!rla.isActive" 
+							 [class.bg-transparent]="!rla.isActive">
+							
+							<span>{{ item.label }}</span>
+						</a>
+					</li>
+				}
+			</ul>
+		</div>
+	</div>
+</nav>
