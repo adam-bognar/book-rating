@@ -1,0 +1,16 @@
+<main class="flex flex-col w-full py-12 px-8 gap-10">
+	<header class="space-y-2">
+		<h1 class="text-3xl font-bold">Your Liked Books</h1>
+		<p class="text-sm text-gray-500">A collection of books you've favorited.</p>
+	</header>
+
+	@if (likedBooks.length > 0) {
+		<div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+			@for (b of likedBooks; track b.title) {
+				<app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="b.rating" [releaseDate]="b.releaseDate" />
+			}
+		</div>
+	} @else {
+		<div class="text-sm text-gray-500">You haven't liked any books yet.</div>
+	}
+</main>
