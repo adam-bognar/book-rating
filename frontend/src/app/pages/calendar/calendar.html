@@ -1,0 +1,64 @@
+<main class="flex flex-col w-full py-10 px-8 gap-8">
+	<header class="space-y-2">
+		<h1 class="text-3xl font-bold">Book Release Calendar</h1>
+		<p class="text-sm text-gray-500">Track upcoming and past book releases</p>
+	</header>
+
+	<!-- Controls -->
+	<div class="flex flex-wrap items-center gap-3">
+		<div class="flex items-center gap-2">
+			<button type="button" (click)="prevMonth()" class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-green-50">
+				<span class="sr-only">Previous month</span>
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+			</button>
+			<div class="text-xl font-semibold min-w-[150px] text-center">{{ monthLabel() }}</div>
+			<button type="button" (click)="nextMonth()" class="w-10 h-10 rounded-lg border border-gray-300 flex items-center justify-center hover:bg-green-50">
+				<span class="sr-only">Next month</span>
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+			</button>
+			<button type="button" (click)="goToday()" class="h-10 px-4 rounded-lg border border-gray-300 flex items-center gap-2 text-sm font-medium hover:bg-green-50">
+				<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
+				Today
+			</button>
+		</div>
+	</div>
+
+	<!-- Calendar Grid -->
+	<section class="rounded-2xl border border-gray-200 overflow-hidden bg-white">
+		<div class="grid grid-cols-7 text-xs font-medium text-gray-500 bg-gray-50">
+			<div class="px-3 py-2 text-center">Sun</div>
+			<div class="px-3 py-2 text-center">Mon</div>
+			<div class="px-3 py-2 text-center">Tue</div>
+			<div class="px-3 py-2 text-center">Wed</div>
+			<div class="px-3 py-2 text-center">Thu</div>
+			<div class="px-3 py-2 text-center">Fri</div>
+			<div class="px-3 py-2 text-center">Sat</div>
+		</div>
+		<div class="divide-y divide-gray-200">
+			@for (week of weeks(); track week) {
+			<div class="grid grid-cols-7 min-h-[110px] calendar-row">
+					@for (cell of week; track cell.date?.toISOString() ?? $index) {
+						<div class="relative border-r border-gray-200 last:border-r-0 p-2 text-xs flex flex-col gap-1"
+								 [class.bg-green-50]="cell.date && cell.date.toDateString() === today.toDateString()">
+							<div class="flex items-start justify-between">
+								<span class="font-medium text-gray-700" [class.text-gray-400]="!cell.date">{{ cell.date?.getDate() || '' }}</span>
+								@if (cell.releases.length>0) {
+									<span class="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-600 text-white text-[10px] font-semibold">{{ cell.releases.length }}</span>
+								}
+							</div>
+							<!-- Releases list (first two) -->
+							<div class="flex flex-col gap-1 overflow-hidden">
+								@for (rel of cell.releases.slice(0,2); track rel.id) {
+									<div class="truncate rounded-md bg-green-100/70 px-1.5 py-0.5 text-[10px] font-medium text-green-800 hover:bg-green-200 cursor-pointer" title="{{ rel.title }}">{{ rel.title }}</div>
+								}
+								@if (cell.releases.length > 2) {
+									<div class="text-[10px] text-green-700 font-medium">+{{ cell.releases.length - 2 }} more</div>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			}
+		</div>
+	</section>
+</main>
