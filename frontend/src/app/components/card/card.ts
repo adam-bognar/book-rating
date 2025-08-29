@@ -1,5 +1,6 @@
 import { Component, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-card',
@@ -17,4 +18,11 @@ export class Card {
 
   readonly favorited = signal(false);
   toggleFavorite() { this.favorited.update(v => !v); }
+
+  constructor(private router: Router) {}
+
+  navigateToBook() {
+    if (!this.title) return;
+    this.router.navigate(['/book', encodeURIComponent(this.title)]);
+  }
 }

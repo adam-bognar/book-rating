@@ -19,13 +19,6 @@
         }
       </select>
 
-      <!-- Sort Field -->
-      <select formControlName="sortField"
-          class="h-12 px-4 rounded-lg border border-gray-300 bg-white focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none text-sm">
-        @for (field of sortFields; track field) {
-          <option [value]="field">{{ field }}</option>
-        }
-      </select>
 
       <!-- Sort Direction Toggle -->
       <button type="button" (click)="toggleDir()"
@@ -46,15 +39,24 @@
 
   <!-- Books Grid -->
   <section class="mt-10">
-    <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-      @for (b of pagedBooks(); track b.title) {
-        <app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="b.rating" [releaseDate]="b.releaseDate" />
-      }
-    </div>
+    @if (loading()) {
+      <div class="py-20 text-center text-sm text-gray-500">Loading books...</div>
+    } @else if (error()) {
+      <div class="py-20 text-center text-sm text-red-600">{{ error() }} <button type="button" (click)="loadBooks()" class="underline">Retry</button></div>
+    } @else {
+      <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        @for (b of pagedBooks(); track b.title) {
+          <app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="0" [releaseDate]="b.published" />
+        }
+        @if (pagedBooks().length === 0) {
+          <div class="col-span-full py-20 text-center text-sm text-gray-500">No books found.</div>
+        }
+      </div>
+    }
 
     <!-- Pagination -->
     <div class="mt-10 flex items-center justify-between flex-wrap gap-4">
-      <p class="text-sm text-gray-500">Page {{ currentPage() }} of {{ totalPages() }} (showing {{ pagedBooks().length }} of {{ books.length }} books)</p>
+  <p class="text-sm text-gray-500">Page {{ currentPage() }} of {{ totalPages() }} (showing {{ pagedBooks().length }} of {{ books.length }} books)</p>
       <div class="flex items-center gap-2">
         <button type="button" (click)="goTo(currentPage()-1)" [disabled]="currentPage()===1" class="px-3 h-9 rounded-md border text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-green-50">Prev</button>
         @for (p of [].constructor(totalPages()); track p; let i = $index) {

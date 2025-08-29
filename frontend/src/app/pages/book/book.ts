@@ -1,6 +1,10 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { BookDto } from '../../models/book';
+import { Book as BookService} from '../../services/book';
+import { HttpErrorResponse } from '@angular/common/http';
+
 
 @Component({
   selector: 'app-book',
@@ -10,27 +14,41 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './book.css'
 })
 export class Book {
-  private readonly allBooks = [
-    { id: 'atomic-habits', title: 'Atomic Habits', author: 'James Clear', category: 'Self-Help', releaseDate: 'Oct 2018', rating: 4.7 },
-    { id: 'dune', title: 'Dune', author: 'Frank Herbert', category: 'Science Fiction', releaseDate: 'Aug 1965', rating: 4.6 }
-  ];
+  loading = signal(true);
+  error = signal<string | null>(null);
+  bookSig = signal<BookDto | null>(null);
+  
+  reviews = computed(() => this.bookSig()?.reviews ?? []);
+  averageRating = computed(() => {
+    const list = this.reviews();
+    if (!list.length) return null;
+    return list.reduce((sum, r) => sum + r.rating, 0) / list.length;
+  });
 
-  private readonly reviewsData: Record<string, { user: string; rating: number; text: string; date: string }[]> = {
-    'atomic-habits': [
-      { user: 'Alice', rating: 5, text: 'Life changing framework for improvement.', date: '2024-05-01' },
-      { user: 'Ben', rating: 4, text: 'Great tactics, a bit repetitive in spots.', date: '2024-06-15' }
-    ],
-    'dune': [
-      { user: 'Cara', rating: 5, text: 'Epic world-building and politics.', date: '2024-07-12' }
-    ]
-  };
+  constructor(private route: ActivatedRoute, private bookService: BookService) {
+    this.loadBook();
+  }
 
-  readonly bookId = signal<string>('');
-  readonly book = computed(() => this.allBooks.find(b => b.id === this.bookId()) );
-  readonly reviews = computed(() => this.reviewsData[this.bookId()] ?? []);
+  loadBook(){
+    this.loading.set(true);
+    this.error.set(null);
+    const raw = this.route.snapshot.paramMap.get('id'); 
+    if(!raw){
+      this.error.set('Missing book title in URL');
+      this.loading.set(false);
+      return;
+    }
 
-  constructor(route: ActivatedRoute) {
-    const id = route.snapshot.paramMap.get('id');
-    if (id) this.bookId.set(id);
+    const encodedTitle = encodeURIComponent(raw);
+    this.bookService.getBookByTitle(encodedTitle).subscribe({
+      next: (data: BookDto) => {
+        this.bookSig.set(data);
+        this.loading.set(false);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error.set(err.message);
+        this.loading.set(false);
+      }
+    });
   }
 }

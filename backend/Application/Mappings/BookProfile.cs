@@ -13,7 +13,10 @@ namespace Application.Mappings
     {
         public BookProfile()
         {
-            CreateMap<Book, BookDto>();
+            CreateMap<Book, BookDto>()
+                .ForMember(x => x.reviews, opt => opt.MapFrom(src => src.Reviews));
+
+            CreateMap<Review, ReviewDto>();
 
         }
     }
