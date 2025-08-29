@@ -1,9 +1,11 @@
 ﻿using Application.Commands;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Api.Controllers
 {
@@ -12,10 +14,12 @@ namespace Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AccountController(IMediator mediator)
+        public AccountController(IMediator mediator, UserManager<ApplicationUser> userManager)
         {
             _mediator = mediator;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
@@ -39,5 +43,27 @@ namespace Api.Controllers
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return Ok();
         }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<ActionResult<UserMeResponse>> Me()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user is null)
+                return Unauthorized();
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return Ok(new UserMeResponse(
+                user.Email ?? string.Empty,
+                roles.ToList()
+            ));
+        }
+
+        public sealed record UserMeResponse(string Email, List<string> Roles);
     }
 }
