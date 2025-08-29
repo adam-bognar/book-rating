@@ -24,7 +24,7 @@ namespace Application.Commands
         {
             var user = new ApplicationUser
             {
-                UserName = request.username,
+                UserName = request.email,
                 Email = request.email,
             };
 

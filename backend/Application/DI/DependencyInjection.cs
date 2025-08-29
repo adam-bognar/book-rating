@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
+using AutoMapper;
 
 namespace Application.DI
 {
@@ -14,6 +15,9 @@ namespace Application.DI
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+
+            services.AddAutoMapper(cgf => { }, typeof(DependencyInjection).Assembly);
+
             return services;
         }
     }

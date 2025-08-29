@@ -9,6 +9,14 @@ namespace Domain.Entities
 {
     public class ApplicationUser : IdentityUser
     {
-        public ApplicationUser() { }
+        public ICollection<Review> Reviews { get; set; }
+        public ICollection<BookLike> BookLikes { get; set; }
+
+
+        public ApplicationUser()
+        {
+            Reviews = new List<Review>();
+            BookLikes = new List<BookLike>();
+        }
     }
 }
