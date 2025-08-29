@@ -159,8 +159,8 @@ logs/
 /.cache/
 
 ###############
-# Generated EF Migrations (Usually COMMIT; comment if keeping)
-#!**/Migrations/
+# Generated EF Migrations 
+**/Migrations/
 
 ###############
 # Local notes / scratch
@@ -168,3 +168,4 @@ notes.local.*
 scratch.*
 
 # End of file
+
