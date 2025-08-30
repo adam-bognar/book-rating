@@ -27,7 +27,7 @@ namespace Application.Queries
 
         public async Task<BookDto?> Handle(GetBookByTitleQuery request, CancellationToken cancellationToken)
         {
-            var book = await _context.Books.FirstOrDefaultAsync(x => x.Title.ToLower() == request.title.ToLower());
+            var book = await _context.Books.Include(x=> x.Reviews).FirstOrDefaultAsync(x => x.Title.ToLower() == request.title.ToLower());
 
             return book is null ? null : _mapper.Map<BookDto?>(book);
         }

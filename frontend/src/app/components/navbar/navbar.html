@@ -6,7 +6,7 @@
 			</div>
 
 			<ul class="flex items-center gap-1">
-				@for (item of navItems; track item.path) {
+				@for (item of navItems(); track item.path) {
 					<li>
 						<a [routerLink]="item.path" routerLinkActive="active"
 							 #rla="routerLinkActive"

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrl: './card.css'
 })
 export class Card {
+  @Input() id = '';
   @Input() title = '';
   @Input() author = '';
   @Input() category = '';

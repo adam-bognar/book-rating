@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Card } from '../../components/card/card';
+import { BookDto } from '../../models/book';
+import { LikeService } from '../../services/like';
+
 
 @Component({
   selector: 'app-profile',
@@ -10,10 +13,37 @@ import { Card } from '../../components/card/card';
   styleUrl: './profile.css'
 })
 export class Profile {
-  likedBooks = [
-    { title: 'Atomic Habits', author: 'James Clear', category: 'Self-Help', rating: 4.7, releaseDate: 'Oct 2018' },
-    { title: 'Dune', author: 'Frank Herbert', category: 'Science Fiction', rating: 4.6, releaseDate: 'Aug 1965' },
-    { title: 'Project Hail Mary', author: 'Andy Weir', category: 'Science Fiction', rating: 4.8, releaseDate: 'May 2021' },
-    { title: 'The Hobbit', author: 'J.R.R. Tolkien', category: 'Fiction', rating: 4.8, releaseDate: 'Sep 1937' }
-  ];
+  loading = signal(true);
+  error = signal<string | null>(null);
+  likedBooks = signal<BookDto[]>([]);
+
+  
+
+  constructor(private likeService: LikeService) {
+    this.loadLikedBooks();
+  }
+
+  loadLikedBooks() {
+    this.loading.set(true);
+    this.error.set(null);
+    this.likeService.getLikedBooks().subscribe({
+      next: (books) => {
+        this.likedBooks.set(books);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message);
+        this.loading.set(false);
+      }
+    });
+  }
+
+  
+
+  getAverage(book: BookDto): number | null {
+    const list = book.reviews || [];
+    if (!list.length) return null;
+    return list.reduce((s, r) => s + r.rating, 0) / list.length;
+  }
 }
+  

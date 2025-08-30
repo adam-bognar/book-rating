@@ -46,7 +46,6 @@
 									<span class="ml-auto inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-600 text-white text-[10px] font-semibold">{{ cell.releases.length }}</span>
 								}
 							</div>
-							<!-- Releases list (first two) -->
 							<div class="flex flex-col gap-1 overflow-hidden">
 								@for (rel of cell.releases.slice(0,2); track rel.id) {
 									<div class="truncate rounded-md bg-green-100/70 px-1.5 py-0.5 text-[10px] font-medium text-green-800 hover:bg-green-200 cursor-pointer" title="{{ rel.title }}">{{ rel.title }}</div>

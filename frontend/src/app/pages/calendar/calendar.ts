@@ -1,5 +1,8 @@
 import { Component, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BookDto } from '../../models/book';
+import { Book as BookService} from '../../services/book';
+
 
 @Component({
   selector: 'app-calendar',
@@ -9,17 +12,47 @@ import { CommonModule } from '@angular/common';
   styleUrl: './calendar.css'
 })
 export class Calendar {
+
+  loading = signal(true);
+  error = signal<string | null>(null);
+  booksSig = signal<BookDto[]>([]);
+
+  constructor(private bookService: BookService) {
+    this.loadBooks();
+  }
+
+  loadBooks() {
+    this.loading.set(true);
+    this.error.set(null);
+    this.bookService.getBooks().subscribe({
+      next: (books) => {
+        this.booksSig.set(books);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.message);
+        this.loading.set(false);
+      }
+    });
+  }
+
   today = new Date();
   currentYear = signal(this.today.getFullYear());
   currentMonth = signal(this.today.getMonth());
 
-  private releases: Record<string, { title: string; id: string }[]> = {
-    [this.iso(new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()))]: [
-      { title: 'Surprise Drop', id: 'surprise' }
-    ],
-    [this.iso(new Date(2025, 6, 9))]: [ { title: 'Space Odyssey Reborn', id: 'space-odyssey' } ],
-    [this.iso(new Date(2025, 6, 16))]: [ { title: 'Mystery Manor', id: 'mystery-manor' }, { title: 'Desert Dune Tales', id: 'dune-tales' } ]
-  };
+  releasesMap = computed(() => {
+    const map: Record<string, { title: string; id: string }[]> = {};
+    for (const b of this.booksSig()) {
+      if (!b.published) continue;
+      const d = new Date(b.published);
+      if (isNaN(d.getTime())) continue;
+      const key = this.iso(d);
+      (map[key] ||= []).push({ title: b.title, id: b.id });
+    }
+    return map;
+  });
+
+
 
   monthLabel = computed(() => {
     return new Date(this.currentYear(), this.currentMonth(), 1).toLocaleString(undefined, { month: 'long', year: 'numeric' });
@@ -48,7 +81,7 @@ export class Calendar {
     for (let i = 0; i < startDay; i++) cells.push({ date: null, releases: [] });
     for (let d = 1; d <= daysInMonth; d++) {
       const date = new Date(year, month, d);
-      cells.push({ date, releases: this.releases[this.iso(date)] ?? [] });
+  cells.push({ date, releases: this.releasesMap()[this.iso(date)] ?? [] });
     }
     while (cells.length % 7 !== 0) cells.push({ date: null, releases: [] });
     const weeks: typeof cells[] = [];

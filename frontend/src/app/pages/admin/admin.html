@@ -1,0 +1,68 @@
+@if (isAdmin()) {
+
+<main class="max-w-5xl mx-auto py-10 px-6 space-y-10">
+	<h1 class="text-2xl font-bold">Book Admin</h1>
+
+	@if (error()) {
+		<div class="p-3 rounded-md bg-red-100 text-red-700 text-sm">{{ error() }}</div>
+	}
+
+	<section class="grid md:grid-cols-2 gap-10">
+		<!-- Form -->
+		<form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4 p-5 rounded-xl border bg-white">
+			<h2 class="text-lg font-semibold" >{{ editingId() ? 'Edit Book' : 'Create Book' }}</h2>
+			<div class="space-y-1">
+				<label class="text-xs font-medium text-gray-600">Title</label>
+				<input formControlName="title" type="text" class="w-full rounded-md border px-3 py-2 text-sm" />
+			</div>
+			<div class="space-y-1">
+				<label class="text-xs font-medium text-gray-600">Author</label>
+				<input formControlName="author" type="text" class="w-full rounded-md border px-3 py-2 text-sm" />
+			</div>
+			<div class="space-y-1">
+				<label class="text-xs font-medium text-gray-600">Category</label>
+				<select formControlName="category" class="w-full rounded-md border px-3 py-2 text-sm">
+					@for (c of categories; track c) { <option [value]="c">{{ c }}</option> }
+				</select>
+			</div>
+			<div class="space-y-1">
+				<label class="text-xs font-medium text-gray-600">Release Date</label>
+				<input formControlName="published" type="date" class="w-full rounded-md border px-3 py-2 text-sm" />
+			</div>
+			<div class="flex items-center gap-3 pt-2">
+				<button type="submit" [disabled]="form.invalid || loading()" class="px-4 py-2 rounded-md bg-green-600 text-white text-sm disabled:opacity-40">{{ editingId() ? 'Update' : 'Create' }}</button>
+				@if (editingId()) { <button type="button" (click)="resetForm()" class="px-3 py-2 rounded-md border text-sm">Cancel</button> }
+			</div>
+		</form>
+
+		<!-- List -->
+		<div class="space-y-4">
+			<div class="flex items-center justify-between">
+				<h2 class="text-lg font-semibold">Existing Books</h2>
+				<button type="button" (click)="load()" class="text-sm underline">Reload</button>
+			</div>
+			@if (loading()) {
+				<div class="text-sm text-gray-500 py-10">Loading...</div>
+			} @else {
+				<ul class="divide-y border rounded-md bg-white">
+					@for (b of books(); track b.title) {
+						<li (click)="select(b)" class="p-3 flex items-center justify-between gap-4 cursor-pointer hover:bg-gray-50">
+							<div class="min-w-0">
+								<p class="text-sm font-medium truncate">{{ b.title }}</p>
+								<p class="text-xs text-gray-500 truncate">{{ b.author }} • {{ b.category }}</p>
+								<p class="text-[10px] text-gray-400">{{ b.published | date:'yyyy-MM-dd' }}</p>
+							</div>
+							<button type="button" (click)="delete(b, $event)" class="text-xs text-red-600 hover:underline">Delete</button>
+						</li>
+					}
+					@if (books().length === 0) {
+						<li class="p-4 text-sm text-gray-500">No books found.</li>
+					}
+				</ul>
+			}
+		</div>
+	</section>
+</main>
+} @else {
+    <div class="max-w-2xl mx-auto py-20 px-6 text-center text-red-600">Access denied. You do not have permission to view this page.</div>
+}

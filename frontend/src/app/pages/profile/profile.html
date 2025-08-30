@@ -4,10 +4,10 @@
 		<p class="text-sm text-gray-500">A collection of books you've favorited.</p>
 	</header>
 
-	@if (likedBooks.length > 0) {
+	@if (likedBooks().length > 0) {
 		<div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-			@for (b of likedBooks; track b.title) {
-				<app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="b.rating" [releaseDate]="b.releaseDate" />
+			@for (b of likedBooks(); track b.id) {
+				<app-card [title]="b.title" [author]="b.author" [category]="b.category" [rating]="getAverage(b)" [releaseDate]="b.published" />
 			}
 		</div>
 	} @else {

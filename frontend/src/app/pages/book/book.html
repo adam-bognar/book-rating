@@ -22,6 +22,10 @@
 						<span class="text-gray-600">Released {{ b.published | date:'mediumDate' }}</span>
 					</div>
 				</div>
+				<button type="button" (click)="addToFavorite()" [disabled]="liking() || liked()" class="px-4 py-2 text-sm font-medium rounded-md border bg-white transition-colors"
+				  [class.bg-green-100]="liked()" [class.text-green-700]="liked()" [class.hover\:bg-green-50]="!liked()">
+				  @if (liked()) { Favorited } @else if (liking()) { Saving... } @else { Add to favorite }
+				</button>
 			</div>
 			<hr class="border-gray-200" />
 		</section>
@@ -29,6 +33,22 @@
 		<!-- Reviews -->
 		<section class="space-y-6">
 			<h2 class="text-xl font-semibold">Reviews ({{ reviews().length }})</h2>
+			<!-- Review Form -->
+			<div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm space-y-3">
+				<h3 class="text-sm font-medium text-gray-700">Add a Review</h3>
+				<div class="flex items-center gap-3">
+					<label class="text-xs font-medium text-gray-600">Rating</label>
+					<select class="border rounded-md px-2 py-1 text-sm" [value]="newRating()" (change)="newRating.set(+$any($event.target).value)">
+						<option value="0">Select</option>
+						@for (r of [1,2,3,4,5]; track r) { <option [value]="r">{{ r }}</option> }
+					</select>
+				</div>
+				<textarea class="w-full border rounded-md px-3 py-2 text-sm min-h-[90px]" placeholder="Share your thoughts..." [value]="newText()" (input)="newText.set($any($event.target).value)"></textarea>
+				@if (reviewError()) { <div class="text-xs text-red-600">{{ reviewError() }}</div> }
+				<div class="flex justify-end">
+					<button type="button" (click)="submitReview()" [disabled]="!canSubmitReview()" class="px-4 py-2 rounded-md bg-green-600 text-white text-sm disabled:opacity-40">Submit Review</button>
+				</div>
+			</div>
 			<div class="space-y-4">
 				@for (r of reviews(); track r.text + r.rating) {
 					<article class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
